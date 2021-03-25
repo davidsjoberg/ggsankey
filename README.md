@@ -12,8 +12,7 @@ bump plots i `ggplot2`
 
 ## Installation
 
-You can install the development version of ggsankey from \`\`github
-with:
+You can install the development version of ggsankey from `github` with:
 
 ``` r
 # install.packages("devtools")
@@ -46,7 +45,7 @@ ggplot(df, aes(x = x,
 
 And by adding a little pimp and labels with `geom_sankey_label` which
 places labels in the center of nodes if given the same aestethics.
-`ggsunkey` also comes with custom minimalistic themes that can be
+`ggsankey` also comes with custom minimalistic themes that can be
 used.
 
 ``` r

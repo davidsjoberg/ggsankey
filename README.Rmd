@@ -32,7 +32,7 @@ The goal of ggsankey is to make beautiful sankey, alluvial and sankey bump plots
 
 ## Installation
 
-You can install the development version of ggsankey from ``github with:
+You can install the development version of ggsankey from `github` with:
 
 ``` r
 # install.packages("devtools")
@@ -62,7 +62,7 @@ ggplot(df, aes(x = x,
 
 ```
 
-And by adding a little pimp and labels with `geom_sankey_label` which places labels in the center of nodes if given the same aestethics. `ggsunkey` also comes with custom minimalistic themes that can be used.
+And by adding a little pimp and labels with `geom_sankey_label` which places labels in the center of nodes if given the same aestethics. `ggsankey` also comes with custom minimalistic themes that can be used.
 
 ```{r sankey}
 ggplot(df, aes(x = x, next_x = next_x, node = node, next_node = next_node, fill = factor(node), label = node)) +
