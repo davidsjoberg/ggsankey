@@ -8,7 +8,7 @@
 <!-- badges: end -->
 
 The goal of ggsankey is to make beautiful sankey, alluvial and sankey
-bump plots i `ggplot2`
+bump plots in `ggplot2`
 
 ## Installation
 
@@ -16,8 +16,39 @@ You can install the development version of ggsankey from `github` with:
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("davidsjoberg/ggbump")
+devtools::install_github("davidsjoberg/ggsankey")
 ```
+
+## How does it work
+
+[Google](https://developers.google.com/chart/interactive/docs/gallery/sankey)
+defines a sankey as:
+
+***A sankey diagram is a visualization used to depict a flow from one
+set of values to another. The things being connected are called nodes
+and the connections are called links. Sankeys are best used when you
+want to show a many-to-many mapping between two domains or multiple
+paths through a set of stages.***
+
+To plot a sankey diagram with `ggsankey` each observation has a *stage*
+(called a discrete x-value in `ggplot`) and be part of a *node*.
+Furthermore, each observation needs to have instructions of which *node*
+it will belong to in the next *stage*. See the image below for some
+clarification.
+
+<img src="man/figures/README-unnamed-chunk-2-1.png" width="100%" />
+
+Hence, to use `geom_sankey` the aestethics `x`, `next_x`, `node` and
+`next_node` are required. The last *stage* should point to `NA`. The
+aestethics fill and color will affect both *nodes* and *flows*.
+
+To controll geometries (not changed by data) like fill, color, size,
+alpha etc for *nodes* and *flows* you can either choose to set a global
+value that affect both, or you can specify which one you want to alter.
+For example `node.color = 'black'` will only draw a black line around
+the nodes, but not the flows (links).
+
+<img src="man/figures/README-unnamed-chunk-3-1.png" width="100%" />
 
 ## Example
 
@@ -27,8 +58,8 @@ A basic sankey plot that shows how dimensions are linked.
 
 ``` r
 library(ggsankey)
-library(tidyverse)
-library(hablar)
+library(dplyr)
+library(ggplot2)
 
 df <- mtcars %>%
   make_long(cyl, vs, am, gear, carb)
@@ -43,15 +74,23 @@ ggplot(df, aes(x = x,
 
 <img src="man/figures/README-example-1.png" width="100%" />
 
-And by adding a little pimp and labels with `geom_sankey_label` which
-places labels in the center of nodes if given the same aestethics.
-`ggsankey` also comes with custom minimalistic themes that can be
-used.
+And by adding a little pimp.
+
+  - Labels with `geom_sankey_label` which places labels in the center of
+    nodes if given the same aestethics.
+
+  - `ggsankey` also comes with custom minimalistic themes that can be
+    used. Here I use
+`theme_sankey`.
+
+  - 
+<!-- end list -->
 
 ``` r
 ggplot(df, aes(x = x, next_x = next_x, node = node, next_node = next_node, fill = factor(node), label = node)) +
-  geom_sankey(flow.alpha = .6) +
-  geom_sankey_text(size = 3, color = "white") +
+  geom_sankey(flow.alpha = .6,
+              node.color = "gray30") +
+  geom_sankey_label(size = 3, color = "white", fill = "gray40") +
   scale_fill_viridis_d() +
   theme_sankey(base_size = 18) +
   labs(x = NULL) +

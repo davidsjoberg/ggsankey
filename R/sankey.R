@@ -613,7 +613,25 @@ StatSankeyNode <- ggplot2::ggproto("StatSankeyNode", ggplot2::Stat,
 #' @param width width of nodes
 #' @param smooth how much smooth should the curve have? More means steeper curve.
 #' @param inherit.aes should the geom inherits aestethics
-#' @param ... other arguments to be passed to the geo
+#' @param ... other arguments to be passed to the geom
+#'
+#' @section Aesthetics:
+#' geom_arc understand the following aesthetics (required aesthetics are in
+#' bold):
+#'
+#' - **x0**
+#' - **y0**
+#' - **a**
+#' - **b**
+#' - **angle**
+#' - m1
+#' - m2
+#' - color
+#' - fill
+#' - size
+#' - linetype
+#' - alpha
+#' - lineend
 #'
 #' @return ggplot layer
 #'

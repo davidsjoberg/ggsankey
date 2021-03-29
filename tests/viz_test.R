@@ -108,16 +108,16 @@ p_titanic_alluvial <- ggplot(df, aes(x = x, next_x = next_x, node = node, next_n
 
 
 # **SankeyBump ---------------------------
-df <- gapminder %>%
+df <- gapminder::gapminder %>%
   group_by(continent, year) %>%
-  summarise(gdp = (sum_(pop * gdpPercap)/1e9) %>% round(0), .groups = "keep") %>%
+  summarise(gdp = (sum(pop * gdpPercap)/1e9) %>% round(0), .groups = "keep") %>%
   ungroup()
 
 p_gapminder_bumpsankey <- ggplot(df, aes(x = year,
                                          node = continent,
                                          fill = continent,
                                          value = gdp)) +
-  geom_sankey_bump(space = 0, type = "alluvial", color = "transparent", smooth = 6) +
+  geom_sankey_bump(space = 1500, type = "sankey", color = "transparent", smooth = 6) +
   scale_fill_viridis_d(option = "A", alpha = .8) +
   theme_sankey_bump(base_size = 16) +
   labs(x = NULL,

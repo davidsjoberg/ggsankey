@@ -21,6 +21,8 @@ knitr::opts_chunk$set(
 library(ggsankey)
 library(tidyverse)
 library(hablar)
+library(titanic)
+library(gapminder)
 ```
 
 # ggsankey
@@ -28,7 +30,7 @@ library(hablar)
 <!-- badges: start -->
 <!-- badges: end -->
 
-The goal of ggsankey is to make beautiful sankey, alluvial and sankey bump plots i `ggplot2`
+The goal of ggsankey is to make beautiful sankey, alluvial and sankey bump plots in `ggplot2`
 
 ## Installation
 
@@ -36,7 +38,187 @@ You can install the development version of ggsankey from `github` with:
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("davidsjoberg/ggbump")
+devtools::install_github("davidsjoberg/ggsankey")
+```
+
+## How does it work
+
+[Google](https://developers.google.com/chart/interactive/docs/gallery/sankey) defines a sankey as:
+
+***A sankey diagram is a visualization used to depict a flow from one set of values to another. The things being connected are called nodes and the connections are called links. Sankeys are best used when you want to show a many-to-many mapping between two domains or multiple paths through a set of stages.***
+
+To plot a sankey diagram with `ggsankey` each observation has a *stage* (called a discrete x-value in `ggplot`) and be part of a *node*. Furthermore, each observation needs to have instructions of which *node* it will belong to in the next *stage*.  See the image below for some clarification.
+
+```{r, echo = FALSE}
+# Ellips 1
+xmiddle <- 2
+data <- tibble(x0 = xmiddle, y0 = 180, a = .2, b = 280, angle = 0)
+data$m1 <- ifelse(is.null(data$m1), 2, data$m1)
+data$m2 <- ifelse(is.null(data$m2), data$m1, data$m2)
+n_ellipses <- nrow(data)
+n <- 360
+
+data <- data[rep(seq_len(n_ellipses), each = n), ]
+points <- rep(seq(0, 2 * pi, length.out = n + 1)[seq_len(n)],
+              n_ellipses)
+cos_p <- cos(points)
+sin_p <- sin(points)
+x_tmp <- abs(cos_p)^(2 / data$m1) * data$a * sign(cos_p)
+y_tmp <- abs(sin_p)^(2 / data$m2) * data$b * sign(sin_p)
+data$x <- data$x0 + x_tmp * cos(data$angle) - y_tmp * sin(data$angle)
+data$y <- data$y0 + x_tmp * sin(data$angle) + y_tmp * cos(data$angle)
+data1 <- data %>% 
+  filter(x >= xmiddle) %>% 
+  arrange(y)
+data2 <- data %>% 
+  filter(x <= xmiddle) %>% 
+  arrange(y)
+
+# Ellips 2
+xmiddle <- 3.5
+data <- tibble(x0 = xmiddle, y0 = 385, a = .07, b = 60, angle = 0)
+data$m1 <- ifelse(is.null(data$m1), 2, data$m1)
+data$m2 <- ifelse(is.null(data$m2), data$m1, data$m2)
+n_ellipses <- nrow(data)
+n <- 360
+
+data <- data[rep(seq_len(n_ellipses), each = n), ]
+points <- rep(seq(0, 2 * pi, length.out = n + 1)[seq_len(n)],
+              n_ellipses)
+cos_p <- cos(points)
+sin_p <- sin(points)
+x_tmp <- abs(cos_p)^(2 / data$m1) * data$a * sign(cos_p)
+y_tmp <- abs(sin_p)^(2 / data$m2) * data$b * sign(sin_p)
+data$x <- data$x0 + x_tmp * cos(data$angle) - y_tmp * sin(data$angle)
+data$y <- data$y0 + x_tmp * sin(data$angle) + y_tmp * cos(data$angle)
+datat1 <- data %>% 
+  filter(x >= xmiddle) %>% 
+  arrange(y)
+datat2 <- data %>% 
+  filter(x <= xmiddle) %>% 
+  arrange(y)
+
+# Ellips 3
+xmiddle <- 3
+data <- tibble(x0 = xmiddle, y0 = 0, a = .15, b = 600, angle = 0)
+data$m1 <- ifelse(is.null(data$m1), 2, data$m1)
+data$m2 <- ifelse(is.null(data$m2), data$m1, data$m2)
+n_ellipses <- nrow(data)
+n <- 360
+
+data <- data[rep(seq_len(n_ellipses), each = n), ]
+points <- rep(seq(0, 2 * pi, length.out = n + 1)[seq_len(n)],
+              n_ellipses)
+cos_p <- cos(points)
+sin_p <- sin(points)
+x_tmp <- abs(cos_p)^(2 / data$m1) * data$a * sign(cos_p)
+y_tmp <- abs(sin_p)^(2 / data$m2) * data$b * sign(sin_p)
+data$x <- data$x0 + x_tmp * cos(data$angle) - y_tmp * sin(data$angle)
+data$y <- data$y0 + x_tmp * sin(data$angle) + y_tmp * cos(data$angle)
+datatt1 <- data %>% 
+  filter(x >= xmiddle) %>% 
+  arrange(y)
+datatt2 <- data %>% 
+  filter(x <= xmiddle) %>% 
+  arrange(y)
+
+# PLOT
+df <- titanic::titanic_train %>%
+  as_tibble() %>%
+  drop_na() %>%
+  make_long(Embarked, Sex, Pclass, Survived)
+
+df <- df %>%
+  dplyr::mutate(
+    shift = case_when(
+      x == "Embarked" & node == "S" ~ 300,
+      T ~ 0
+    )
+  )
+
+ggplot(df, aes(x = x, next_x = next_x, node = node, next_node = next_node, fill = factor(node), label = node, shift = shift)) +
+  geom_sankey(color = "transparent", fill = "transparent") +
+  geom_path(data = data1, aes(x, y), inherit.aes = F, color = "red", size = 1.5) +
+  geom_path(data = datat1, aes(x, y), inherit.aes = F, color = "red", size = 1.5) +
+  geom_path(data = datatt1, aes(x, y), inherit.aes = F, color = "red", size = 1.5) +
+  geom_sankey(node.color = "black", flow.color = "black") +
+  # geom_sankey_label(size = 3, color = "black", fill = "white") +
+  geom_path(data = data2, aes(x, y), inherit.aes = F, color = "red", size = 1.5) +
+  geom_path(data = datat2, aes(x, y), inherit.aes = F, color = "red", size = 1.5) +
+  geom_path(data = datatt2, aes(x, y), inherit.aes = F, color = "red", size = 1.5) +
+  geom_text(data = tibble(x = c(3.5, 2, 3.5), y = c(510, 520, -570), label = c("Flow", "Node", "Stage (x)")), aes(x, y, label = label), inherit.aes = F, color = "red", size = 8) +
+  scale_fill_viridis_d() +
+  scale_x_discrete(expand = scales::expand_range(.2)) +
+  theme_void(base_size = 18) +
+  labs(x = NULL) +
+  theme(legend.position = "none",
+        plot.title = element_text(hjust = .5)) +
+  labs(y = NULL)
+# ggsave("sankey_aes.png", dpi = 800, height = 4, width = 8)
+```
+
+Hence, to use `geom_sankey` the aestethics `x`, `next_x`, `node` and `next_node` are required. The last *stage* should point to `NA`. The aestethics fill and color will affect both *nodes* and *flows*.
+
+To controll geometries (not changed by data) like fill, color, size, alpha etc for *nodes* and *flows* you can either choose to set a global value that affect both, or you can specify which one you want to alter. For example `node.color = 'black'` will only draw a black line around the nodes, but not the flows (links).
+
+```{r, echo = FALSE}
+library(vhs)
+# PLOT
+df <- titanic::titanic_train %>%
+  as_tibble() %>%
+  drop_na() %>%
+  make_long(Embarked, Sex, Pclass, Survived)
+
+df <- df %>%
+  dplyr::mutate(
+    shift = case_when(
+      x == "Embarked" & node == "S" ~ 200,
+      T ~ 0
+    )
+  )
+
+ggplot(df, aes(x = x, next_x = next_x, node = node, next_node = next_node, label = node, shift = shift)) +
+  geom_sankey(color = "transparent", fill = "transparent") +
+  geom_sankey(node.color = "black",
+              node.fill = "#e44436ff",
+              node.size = .5, 
+              flow.alpha = .7,
+              flow.color = "#c07a3eff",
+              flow.fill = "#3b345dff") +
+  # geom_sankey_label(size = 3, color = "black", fill = "white") +
+  geom_text(data = tibble(x = c(4.4), y = c(70), label = c("space")), aes(x, y, label = label), inherit.aes = F, color = "black", size = 8) +
+  geom_errorbar(aes(x = 4, ymin = 35, ymax = 98), inherit.aes = F, color = "black", size = .9, width = .06) +
+  
+  # node color
+  geom_text(aes(2.22, 500, label = "node.color"), color = "black", inherit.aes = F, size = 5, hjust = 0) +
+  geom_curve(aes(2.2, 500, xend = 2, yend = 415), color = "black", inherit.aes = F, arrow = arrow(length = unit(0.1, "inches"))) +
+  
+  # node fill
+  geom_text(aes(1.6, 600, label = "node.fill"), color = "#e44436ff", inherit.aes = F, size = 5, hjust = 0) +
+  geom_curve(aes(1.7, 560, xend = 2, yend = 300), color = "black", inherit.aes = F, arrow = arrow(length = unit(0.1, "inches")), curvature = .3) +
+
+  # flow color
+  geom_text(aes(3.92, 500, label = "flow.color"), color = "#c07a3eff", inherit.aes = F, size = 5, hjust = 0) +
+  geom_curve(aes(3.9, 500, xend = 3.65, yend = 415), color = "black", inherit.aes = F, arrow = arrow(length = unit(0.1, "inches"))) +
+  
+  # flow fill
+  geom_text(aes(3.05, 620, label = "flow.fill"), color = "#3b345dff", inherit.aes = F, size = 5, hjust = 0) +
+  geom_curve(aes(3.1, 580, xend = 3.2, yend = 400), color = "black", inherit.aes = F, arrow = arrow(length = unit(0.1, "inches")), curvature = .1) +
+
+  # flow alpha
+  geom_text(aes(3.69, -500, label = "flow.alpha"), color = "black", inherit.aes = F, size = 5, hjust = 0) +
+  geom_text(aes(3.69, -555, label = "(Transparency)"), color = "black", inherit.aes = F, size = 3, hjust = 0) +
+  geom_curve(aes(3.65, -500, xend = 3.42, yend = -220), color = "black", inherit.aes = F, arrow = arrow(length = unit(0.1, "inches")), curvature = -.5) +
+  
+  scale_fill_viridis_d() +
+  scale_x_discrete(expand = scales::expand_range(.2)) +
+  theme_void(base_size = 18) +
+  labs(x = NULL) +
+  theme(legend.position = "none",
+        plot.title = element_text(hjust = .5)) +
+  labs(y = NULL)
+
+# ggsave("sankey_geom.png", dpi = 800, height = 4, width = 8)
 ```
 
 ## Example
@@ -47,8 +229,8 @@ A basic sankey plot that shows how dimensions are linked.
 
 ```{r example}
 library(ggsankey)
-library(tidyverse)
-library(hablar)
+library(dplyr)
+library(ggplot2)
 
 df <- mtcars %>%
   make_long(cyl, vs, am, gear, carb)
@@ -62,12 +244,17 @@ ggplot(df, aes(x = x,
 
 ```
 
-And by adding a little pimp and labels with `geom_sankey_label` which places labels in the center of nodes if given the same aestethics. `ggsankey` also comes with custom minimalistic themes that can be used.
+And by adding a little pimp. 
+
+* Labels with `geom_sankey_label` which places labels in the center of nodes if given the same aestethics. 
+* `ggsankey` also comes with custom minimalistic themes that can be used. Here I use `theme_sankey`.
+* 
 
 ```{r sankey}
 ggplot(df, aes(x = x, next_x = next_x, node = node, next_node = next_node, fill = factor(node), label = node)) +
-  geom_sankey(flow.alpha = .6) +
-  geom_sankey_text(size = 3, color = "white") +
+  geom_sankey(flow.alpha = .6,
+              node.color = "gray30") +
+  geom_sankey_label(size = 3, color = "white", fill = "gray40") +
   scale_fill_viridis_d() +
   theme_sankey(base_size = 18) +
   labs(x = NULL) +
