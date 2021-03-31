@@ -159,6 +159,60 @@ ggplot(df, aes(x = x, next_x = next_x, node = node, next_node = next_node, fill 
 
 Hence, to use `geom_sankey` the aestethics `x`, `next_x`, `node` and `next_node` are required. The last *stage* should point to `NA`. The aestethics fill and color will affect both *nodes* and *flows*.
 
+``` r
+# install.packages("devtools")
+devtools::install_github("davidsjoberg/ggsankey")
+```
+
+## How does it work
+
+[Google](https://developers.google.com/chart/interactive/docs/gallery/sankey) defines a sankey as:
+
+***A sankey diagram is a visualization used to depict a flow from one set of values to another. The things being connected are called nodes and the connections are called links. Sankeys are best used when you want to show a many-to-many mapping between two domains or multiple paths through a set of stages.***
+
+To plot a sankey diagram with `ggsankey` each observation has a *stage* (called a discrete x-value in `ggplot`) and be part of a *node*. Furthermore, each observation needs to have instructions of which *node* it will belong to in the next *stage*.  See the image below for some clarification.
+
+```{r, echo = FALSE}
+# PLOT
+df <- titanic::titanic_train %>%
+  as_tibble() %>%
+  drop_na() %>%
+  make_long(Embarked, Sex, Pclass, Survived)
+
+df <- df %>%
+  dplyr::mutate(
+    shift = case_when(
+      x == "Embarked" & node == "S" ~ 300,
+      T ~ 0
+    )
+  )
+
+ggplot(df, aes(x = x, next_x = next_x, node = node, next_node = next_node, fill = factor(node), label = node, shift = shift)) +
+  geom_sankey(color = "transparent", fill = "transparent") +
+  geom_sankey(node.color = "black", flow.color = "black") +
+    # node fill
+  
+  # aes fill
+  geom_text(aes(1.8, 600, label = "fill"), color = "black", inherit.aes = F, size = 8, hjust = 0) +
+  geom_curve(aes(1.85, 550, xend = 2, yend = 300), color = "black", inherit.aes = F, arrow = arrow(length = unit(0.1, "inches")), curvature = .3) +
+  geom_curve(aes(2, 550, xend = 2.2, yend = 300), color = "black", inherit.aes = F, arrow = arrow(length = unit(0.1, "inches")), curvature = -.3) +
+  
+  # aes color
+  geom_text(aes(2.8, 600, label = "color"), color = "black", inherit.aes = F, size = 8, hjust = 0) +
+  geom_curve(aes(3, 550, xend = 3, yend = 455), color = "black", inherit.aes = F, arrow = arrow(length = unit(0.1, "inches")), curvature = .3) +
+  geom_curve(aes(3.07, 550, xend = 3.2, yend = 455), color = "black", inherit.aes = F, arrow = arrow(length = unit(0.1, "inches")), curvature = -.3) +
+  
+  scale_fill_viridis_d(option = "A") +
+  scale_x_discrete(expand = scales::expand_range(.2)) +
+  theme_void(base_size = 18) +
+  labs(x = NULL) +
+  theme(legend.position = "none",
+        plot.title = element_text(hjust = .5)) +
+  labs(y = NULL,
+       title = "Additional aesthetics")
+# ggsave("sankey_aes.png", dpi = 800, height = 4, width = 8)
+```
+
 To controll geometries (not changed by data) like fill, color, size, alpha etc for *nodes* and *flows* you can either choose to set a global value that affect both, or you can specify which one you want to alter. For example `node.color = 'black'` will only draw a black line around the nodes, but not the flows (links).
 
 ```{r, echo = FALSE}
@@ -186,8 +240,14 @@ ggplot(df, aes(x = x, next_x = next_x, node = node, next_node = next_node, label
               flow.color = "#c07a3eff",
               flow.fill = "#3b345dff") +
   # geom_sankey_label(size = 3, color = "black", fill = "white") +
-  geom_text(data = tibble(x = c(4.4), y = c(70), label = c("space")), aes(x, y, label = label), inherit.aes = F, color = "black", size = 8) +
+  
+  # space
+  geom_text(data = tibble(x = c(4.4), y = c(70), label = c("space")), aes(x, y, label = label), inherit.aes = F, color = "black", size = 6) +
   geom_errorbar(aes(x = 4, ymin = 35, ymax = 98), inherit.aes = F, color = "black", size = .9, width = .06) +
+  
+  # width
+  geom_text(data = tibble(x = 2, y = -545, label = c("width")), aes(x, y, label = label), inherit.aes = F, color = "black", size = 6) +
+  geom_errorbarh(aes(xmin = 2-.05, xmax = 2+.05, y = -470), inherit.aes = F, color = "black", size = .9, height = 30) +
   
   # node color
   geom_text(aes(2.22, 500, label = "node.color"), color = "black", inherit.aes = F, size = 5, hjust = 0) +
