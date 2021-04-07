@@ -42,7 +42,7 @@ geom_sankey(
 
 \item{inherit.aes}{should the geom inherits aestethics}
 
-\item{...}{other arguments to be passed to the geo}
+\item{...}{other arguments to be passed to the geom}
 }
 \value{
 ggplot layer
@@ -53,3 +53,23 @@ geom_sankey
 Creates a sankey plot which visualize flows between nodes. Each observation needs to have a `x` aesthetic as well as a `next_x` column which declares where that observation should flow.
 Also each observation should have a `node` and a `next_node` aesthetic which provide information about which group in the y-direction.
 }
+\section{Aesthetics}{
+
+geom_sankey understand the following aesthetics (required aesthetics are in
+bold):
+
+- **x0**
+- **y0**
+- **a**
+- **b**
+- **angle**
+- m1
+- m2
+- color
+- fill
+- size
+- linetype
+- alpha
+- lineend
+}
+

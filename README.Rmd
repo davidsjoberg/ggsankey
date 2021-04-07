@@ -10,7 +10,7 @@ knitr::opts_chunk$set(
   comment = "#>",
   fig.path = "man/figures/README-",
   out.width = "100%",
-  dpi = 800,
+  dpi = 300,
   comment = FALSE,
   error = FALSE,
   warning = FALSE,
@@ -23,6 +23,9 @@ library(tidyverse)
 library(hablar)
 library(titanic)
 library(gapminder)
+
+# remotes::install_github("cj-holmes/vhs")
+library(vhs)
 ```
 
 # ggsankey
@@ -153,22 +156,13 @@ ggplot(df, aes(x = x, next_x = next_x, node = node, next_node = next_node, fill 
   labs(x = NULL) +
   theme(legend.position = "none",
         plot.title = element_text(hjust = .5)) +
-  labs(y = NULL)
+  labs(y = NULL,
+       title = "Principal aesthetics")
 # ggsave("sankey_aes.png", dpi = 800, height = 4, width = 8)
 ```
 
 Hence, to use `geom_sankey` the aestethics `x`, `next_x`, `node` and `next_node` are required. The last *stage* should point to `NA`. The aestethics fill and color will affect both *nodes* and *flows*.
 
-``` r
-# install.packages("devtools")
-devtools::install_github("davidsjoberg/ggsankey")
-```
-
-## How does it work
-
-[Google](https://developers.google.com/chart/interactive/docs/gallery/sankey) defines a sankey as:
-
-***A sankey diagram is a visualization used to depict a flow from one set of values to another. The things being connected are called nodes and the connections are called links. Sankeys are best used when you want to show a many-to-many mapping between two domains or multiple paths through a set of stages.***
 
 To plot a sankey diagram with `ggsankey` each observation has a *stage* (called a discrete x-value in `ggplot`) and be part of a *node*. Furthermore, each observation needs to have instructions of which *node* it will belong to in the next *stage*.  See the image below for some clarification.
 
@@ -201,6 +195,10 @@ ggplot(df, aes(x = x, next_x = next_x, node = node, next_node = next_node, fill 
   geom_text(aes(2.8, 600, label = "color"), color = "black", inherit.aes = F, size = 8, hjust = 0) +
   geom_curve(aes(3, 550, xend = 3, yend = 455), color = "black", inherit.aes = F, arrow = arrow(length = unit(0.1, "inches")), curvature = .3) +
   geom_curve(aes(3.07, 550, xend = 3.2, yend = 455), color = "black", inherit.aes = F, arrow = arrow(length = unit(0.1, "inches")), curvature = -.3) +
+  
+  # aes shift
+  geom_text(aes(.55, 100, label = "shift"), color = "black", inherit.aes = F, size = 8, hjust = 0) +
+  geom_segment(aes(x = 1, xend = 1, y = -100, yend = 200), color = "black", inherit.aes = F, arrow = arrow(length = unit(0.1, "inches"))) +
   
   scale_fill_viridis_d(option = "A") +
   scale_x_discrete(expand = scales::expand_range(.2)) +
@@ -276,12 +274,13 @@ ggplot(df, aes(x = x, next_x = next_x, node = node, next_node = next_node, label
   labs(x = NULL) +
   theme(legend.position = "none",
         plot.title = element_text(hjust = .5)) +
-  labs(y = NULL)
+  labs(y = NULL,
+       title = "Control the geometries")
 
 # ggsave("sankey_geom.png", dpi = 800, height = 4, width = 8)
 ```
 
-## Example
+## Basic usage
 
 ### geom_sankey
 

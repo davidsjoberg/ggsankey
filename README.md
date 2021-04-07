@@ -42,15 +42,23 @@ Hence, to use `geom_sankey` the aestethics `x`, `next_x`, `node` and
 `next_node` are required. The last *stage* should point to `NA`. The
 aestethics fill and color will affect both *nodes* and *flows*.
 
+To plot a sankey diagram with `ggsankey` each observation has a *stage*
+(called a discrete x-value in `ggplot`) and be part of a *node*.
+Furthermore, each observation needs to have instructions of which *node*
+it will belong to in the next *stage*. See the image below for some
+clarification.
+
+<img src="man/figures/README-unnamed-chunk-3-1.png" width="100%" />
+
 To controll geometries (not changed by data) like fill, color, size,
 alpha etc for *nodes* and *flows* you can either choose to set a global
 value that affect both, or you can specify which one you want to alter.
 For example `node.color = 'black'` will only draw a black line around
 the nodes, but not the flows (links).
 
-<img src="man/figures/README-unnamed-chunk-3-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-4-1.png" width="100%" />
 
-## Example
+## Basic usage
 
 ### geom\_sankey
 
