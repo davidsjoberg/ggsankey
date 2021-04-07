@@ -350,7 +350,7 @@ library(gapminder)
 
 df <- gapminder %>%
   group_by(continent, year) %>%
-  summarise(gdp = (sum_(pop * gdpPercap)/1e9) %>% round(0), .groups = "keep") %>%
+  summarise(gdp = (sum(pop * gdpPercap)/1e9) %>% round(0), .groups = "keep") %>%
   ungroup()
 
 ggplot(df, aes(x = year,
