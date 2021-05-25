@@ -52,24 +52,42 @@ sigmoid <- function(x_from, x_to, y_from, y_to, smooth = 5, n = 300) {
 #'
 #' @param .df a data frame
 #' @param ... unquoted columnnames of df that you want to include in the plot.
+#' @param value if each row have a weight this weight could be kept by providing column name of weight.
 #'
 #' @return a longer data frame
 #'
 #' @export
-make_long <- function(.df, ...) {
+make_long <- function(.df, ..., value = NULL) {
   if("..r" %in% names(.df)) stop("The column name '..r' is not allowed")
   .vars <- dplyr::quos(...)
-  out <- .df %>%
-    dplyr::select(!!!.vars) %>%
-    dplyr::mutate(..r = dplyr::row_number()) %>%
-    tidyr::gather(x, node, -..r) %>%
-    dplyr::arrange(.data$..r) %>%
-    dplyr::group_by(.data$..r) %>%
-    dplyr::mutate(next_x = dplyr::lead(.data$x),
-           next_node = dplyr::lead(.data$node)
-    ) %>%
-    dplyr::ungroup() %>%
-    dplyr::select(-..r)
+
+  if(!missing(value)) {
+    value_var <- dplyr::enquo(value)
+    out <- .df %>%
+      dplyr::select(!!!.vars, value = !!value_var) %>%
+      dplyr::mutate(..r = dplyr::row_number()) %>%
+      tidyr::gather(x, node, -..r, -value) %>%
+      dplyr::arrange(.data$..r) %>%
+      dplyr::group_by(.data$..r) %>%
+      dplyr::mutate(next_x = dplyr::lead(.data$x),
+                    next_node = dplyr::lead(.data$node)
+      ) %>%
+      dplyr::ungroup() %>%
+      dplyr::select(-..r) %>%
+      dplyr::relocate(value, .after = dplyr::last_col())
+  } else {
+    out <- .df %>%
+      dplyr::select(!!!.vars) %>%
+      dplyr::mutate(..r = dplyr::row_number()) %>%
+      tidyr::gather(x, node, -..r) %>%
+      dplyr::arrange(.data$..r) %>%
+      dplyr::group_by(.data$..r) %>%
+      dplyr::mutate(next_x = dplyr::lead(.data$x),
+                    next_node = dplyr::lead(.data$node)
+      ) %>%
+      dplyr::ungroup() %>%
+      dplyr::select(-..r)
+  }
 
   levels <- unique(out$x)
 
@@ -602,7 +620,7 @@ StatSankeyNode <- ggplot2::ggproto("StatSankeyNode", ggplot2::Stat,
 #' @title geom_sankey
 #'
 #' Creates a sankey plot which visualize flows between nodes. Each observation needs to have a `x` aesthetic as well as a `next_x` column which declares where that observation should flow.
-#' Also each observation should have a `node` and a `next_node` aesthetic which provide information about which group in the y-direction.
+#' Also each observation should have a `node` and a `next_node` aesthetic which provide information about which group in the y-direction. By default each row of the data frame is counted to calculate the size of flows. A manual flow value can be added with the `value` aesthetic.
 #'
 #' @param mapping provide you own mapping. both x and y need to be numeric.
 #' @param data provide you own data

@@ -4,12 +4,14 @@
 \alias{make_long}
 \title{make_long}
 \usage{
-make_long(.df, ...)
+make_long(.df, ..., value = NULL)
 }
 \arguments{
 \item{.df}{a data frame}
 
 \item{...}{unquoted columnnames of df that you want to include in the plot.}
+
+\item{value}{if each row have a weight this weight could be kept by providing column name of weight.}
 }
 \value{
 a longer data frame

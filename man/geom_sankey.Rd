@@ -5,7 +5,7 @@
 \title{geom_sankey
 
 Creates a sankey plot which visualize flows between nodes. Each observation needs to have a `x` aesthetic as well as a `next_x` column which declares where that observation should flow.
-Also each observation should have a `node` and a `next_node` aesthetic which provide information about which group in the y-direction.}
+Also each observation should have a `node` and a `next_node` aesthetic which provide information about which group in the y-direction. By default each row of the data frame is counted to calculate the size of flows. A manual flow value can be added with the `value` aesthetic.}
 \usage{
 geom_sankey(
   mapping = NULL,
@@ -51,7 +51,7 @@ ggplot layer
 geom_sankey
 
 Creates a sankey plot which visualize flows between nodes. Each observation needs to have a `x` aesthetic as well as a `next_x` column which declares where that observation should flow.
-Also each observation should have a `node` and a `next_node` aesthetic which provide information about which group in the y-direction.
+Also each observation should have a `node` and a `next_node` aesthetic which provide information about which group in the y-direction. By default each row of the data frame is counted to calculate the size of flows. A manual flow value can be added with the `value` aesthetic.
 }
 \section{Aesthetics}{
 
