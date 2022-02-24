@@ -12,5 +12,7 @@ export(make_long)
 export(theme_alluvial)
 export(theme_sankey)
 export(theme_sankey_bump)
+import(dplyr)
 importFrom(ggplot2,"%+replace%")
 importFrom(magrittr,"%>%")
+
