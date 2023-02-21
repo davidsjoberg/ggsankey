@@ -225,7 +225,7 @@ StatSankeyFlow <- ggplot2::ggproto("StatSankeyFlow", ggplot2::Stat,
                                                  flow_data <- data %>%
                                                    dplyr::mutate(group = 1) %>%
                                                    dplyr::group_by(n_x, node, n_next_x, next_node) %>%
-                                                   summarise(flow_freq = dplyr::n(), .groups = "keep") %>%
+                                                   dplyr::summarise(flow_freq = dplyr::n(), .groups = "keep") %>%
                                                    dplyr::ungroup()
 
                                                  data <- data %>%
