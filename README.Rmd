@@ -19,13 +19,11 @@ knitr::opts_chunk$set(
 )
 
 library(ggsankey)
-library(tidyverse)
-library(hablar)
+library(dplyr)
+library(ggplot2)
+library(tidyr)
 library(titanic)
 library(gapminder)
-
-# remotes::install_github("cj-holmes/vhs")
-library(vhs)
 ```
 
 # ggsankey
@@ -141,14 +139,14 @@ df <- df %>%
 
 ggplot(df, aes(x = x, next_x = next_x, node = node, next_node = next_node, fill = factor(node), label = node, shift = shift)) +
   geom_sankey(color = "transparent", fill = "transparent") +
-  geom_path(data = data1, aes(x, y), inherit.aes = F, color = "red", size = 1.5) +
-  geom_path(data = datat1, aes(x, y), inherit.aes = F, color = "red", size = 1.5) +
-  geom_path(data = datatt1, aes(x, y), inherit.aes = F, color = "red", size = 1.5) +
+  geom_path(data = data1, aes(x, y), inherit.aes = F, color = "red", linewidth = 1.5) +
+  geom_path(data = datat1, aes(x, y), inherit.aes = F, color = "red", linewidth = 1.5) +
+  geom_path(data = datatt1, aes(x, y), inherit.aes = F, color = "red", linewidth = 1.5) +
   geom_sankey(node.color = "black", flow.color = "black") +
   # geom_sankey_label(size = 3, color = "black", fill = "white") +
-  geom_path(data = data2, aes(x, y), inherit.aes = F, color = "red", size = 1.5) +
-  geom_path(data = datat2, aes(x, y), inherit.aes = F, color = "red", size = 1.5) +
-  geom_path(data = datatt2, aes(x, y), inherit.aes = F, color = "red", size = 1.5) +
+  geom_path(data = data2, aes(x, y), inherit.aes = F, color = "red", linewidth = 1.5) +
+  geom_path(data = datat2, aes(x, y), inherit.aes = F, color = "red", linewidth = 1.5) +
+  geom_path(data = datatt2, aes(x, y), inherit.aes = F, color = "red", linewidth = 1.5) +
   geom_text(data = tibble(x = c(3.5, 2, 3.5), y = c(510, 520, -570), label = c("Flow", "Node", "Stage (x)")), aes(x, y, label = label), inherit.aes = F, color = "red", size = 8) +
   scale_fill_viridis_d() +
   scale_x_discrete(expand = scales::expand_range(.2)) +
@@ -161,26 +159,12 @@ ggplot(df, aes(x = x, next_x = next_x, node = node, next_node = next_node, fill 
 # ggsave("sankey_aes.png", dpi = 800, height = 4, width = 8)
 ```
 
-Hence, to use `geom_sankey` the aestethics `x`, `next_x`, `node` and `next_node` are required. The last *stage* should point to `NA`. The aestethics fill and color will affect both *nodes* and *flows*.
+Hence, to use `geom_sankey` the aesthetics `x`, `next_x`, `node` and `next_node` are required. The last *stage* should point to `NA`. The aesthetics fill and color will affect both *nodes* and *flows*.
 
 
 To plot a sankey diagram with `ggsankey` each observation has a *stage* (called a discrete x-value in `ggplot`) and be part of a *node*. Furthermore, each observation needs to have instructions of which *node* it will belong to in the next *stage*.  See the image below for some clarification.
 
 ```{r, echo = FALSE}
-# PLOT
-df <- titanic::titanic_train %>%
-  as_tibble() %>%
-  drop_na() %>%
-  make_long(Embarked, Sex, Pclass, Survived)
-
-df <- df %>%
-  dplyr::mutate(
-    shift = case_when(
-      x == "Embarked" & node == "S" ~ 300,
-      T ~ 0
-    )
-  )
-
 ggplot(df, aes(x = x, next_x = next_x, node = node, next_node = next_node, fill = factor(node), label = node, shift = shift)) +
   geom_sankey(color = "transparent", fill = "transparent") +
   geom_sankey(node.color = "black", flow.color = "black") +
@@ -211,24 +195,9 @@ ggplot(df, aes(x = x, next_x = next_x, node = node, next_node = next_node, fill 
 # ggsave("sankey_aes.png", dpi = 800, height = 4, width = 8)
 ```
 
-To controll geometries (not changed by data) like fill, color, size, alpha etc for *nodes* and *flows* you can either choose to set a global value that affect both, or you can specify which one you want to alter. For example `node.color = 'black'` will only draw a black line around the nodes, but not the flows (links).
+To control geometries (not changed by data) like fill, color, size, alpha etc for *nodes* and *flows* you can either choose to set a global value that affect both, or you can specify which one you want to alter. For example `node.color = 'black'` will only draw a black line around the nodes, but not the flows (links).
 
 ```{r, echo = FALSE}
-library(vhs)
-# PLOT
-df <- titanic::titanic_train %>%
-  as_tibble() %>%
-  drop_na() %>%
-  make_long(Embarked, Sex, Pclass, Survived)
-
-df <- df %>%
-  dplyr::mutate(
-    shift = case_when(
-      x == "Embarked" & node == "S" ~ 200,
-      T ~ 0
-    )
-  )
-
 ggplot(df, aes(x = x, next_x = next_x, node = node, next_node = next_node, label = node, shift = shift)) +
   geom_sankey(color = "transparent", fill = "transparent") +
   geom_sankey(node.color = "black",
@@ -241,11 +210,11 @@ ggplot(df, aes(x = x, next_x = next_x, node = node, next_node = next_node, label
   
   # space
   geom_text(data = tibble(x = c(4.4), y = c(70), label = c("space")), aes(x, y, label = label), inherit.aes = F, color = "black", size = 6) +
-  geom_errorbar(aes(x = 4, ymin = 35, ymax = 98), inherit.aes = F, color = "black", size = .9, width = .06) +
+  geom_errorbar(aes(x = 4, ymin = 35, ymax = 98), inherit.aes = F, color = "black", linewidth = .9, width = .06) +
   
   # width
   geom_text(data = tibble(x = 2, y = -545, label = c("width")), aes(x, y, label = label), inherit.aes = F, color = "black", size = 6) +
-  geom_errorbarh(aes(xmin = 2-.05, xmax = 2+.05, y = -470), inherit.aes = F, color = "black", size = .9, height = 30) +
+  geom_errorbarh(aes(xmin = 2-.05, xmax = 2+.05, y = -470), inherit.aes = F, color = "black", linewidth = .9, height = 30) +
   
   # node color
   geom_text(aes(2.22, 500, label = "node.color"), color = "black", inherit.aes = F, size = 5, hjust = 0) +
@@ -287,10 +256,6 @@ ggplot(df, aes(x = x, next_x = next_x, node = node, next_node = next_node, label
 A basic sankey plot that shows how dimensions are linked.
 
 ```{r example}
-library(ggsankey)
-library(dplyr)
-library(ggplot2)
-
 df <- mtcars %>%
   make_long(cyl, vs, am, gear, carb)
 
@@ -305,9 +270,8 @@ ggplot(df, aes(x = x,
 
 And by adding a little pimp. 
 
-* Labels with `geom_sankey_label` which places labels in the center of nodes if given the same aestethics. 
+* Labels with `geom_sankey_label` which places labels in the center of nodes if given the same aesthetics. 
 * `ggsankey` also comes with custom minimalistic themes that can be used. Here I use `theme_sankey`.
-* 
 
 ```{r sankey}
 ggplot(df, aes(x = x, next_x = next_x, node = node, next_node = next_node, fill = factor(node), label = node)) +
@@ -345,9 +309,6 @@ ggplot(df, aes(x = x, next_x = next_x, node = node, next_node = next_node, fill 
 Sankey bump plots is mix between bump plots and sankey and mostly useful for time series. When a group becomes larger than another it bumps above it.
 
 ```{r sankey_bump}
-# install.packages("gapminder")
-library(gapminder)
-
 df <- gapminder %>%
   group_by(continent, year) %>%
   summarise(gdp = (sum(pop * gdpPercap)/1e9) %>% round(0), .groups = "keep") %>%
