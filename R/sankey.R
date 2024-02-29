@@ -126,7 +126,7 @@ theme_sankey <-
           panel.grid.major = ggplot2::element_blank(),
           panel.grid.minor = ggplot2::element_blank(),
           axis.line = ggplot2::element_line(colour = "black",
-                                            size = ggplot2::rel(1)),
+                                            linewidth = ggplot2::rel(1)),
           legend.key = ggplot2::element_blank(),
           strip.background = ggplot2::element_rect(
             fill = "white",
@@ -346,7 +346,7 @@ StatSankeyBumpFlow <- ggplot2::ggproto("StatSankeyBumpFlow", ggplot2::Stat,
                                                  dplyr::arrange(x, -value) %>%
                                                  dplyr::mutate(bbb = dplyr::row_number()) %>%
                                                  dplyr::arrange(bbb) %>%
-                                                 dplyr::mutate(nodes = fct_reorder(nodes, value, mean)) %>%
+                                                 dplyr::mutate(nodes = forcats::fct_reorder(nodes, value, mean)) %>%
                                                  dplyr::arrange(node, x) %>%
                                                  dplyr::group_by(node) %>%
                                                  dplyr::mutate(next_x = dplyr::lead(x),
