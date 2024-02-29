@@ -7,15 +7,15 @@ Maintainer: David Sjoberg <dav.sjob@gmail.com>
 Description: A package that makes it easy to implement sankey, alluvial and sankey bump plots in ggplot2.
 License: MIT + file LICENSE
 Encoding: UTF-8
-LazyData: true
 Imports: 
     ggplot2,
     dplyr,
     stringr,
     purrr,
     tidyr,
+    forcats,
     magrittr
-RoxygenNote: 7.1.1
+RoxygenNote: 7.3.0
 Suggests: 
     testthat (>= 2.1.0)
 Config/testthat/edition: 2

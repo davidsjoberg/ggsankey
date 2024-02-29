@@ -126,7 +126,7 @@ theme_sankey <-
           panel.grid.major = ggplot2::element_blank(),
           panel.grid.minor = ggplot2::element_blank(),
           axis.line = ggplot2::element_line(colour = "black",
-                                            size = ggplot2::rel(1)),
+                                            linewidth = ggplot2::rel(1)),
           legend.key = ggplot2::element_blank(),
           strip.background = ggplot2::element_rect(
             fill = "white",
@@ -346,7 +346,7 @@ StatSankeyBumpFlow <- ggplot2::ggproto("StatSankeyBumpFlow", ggplot2::Stat,
                                                  dplyr::arrange(x, -value) %>%
                                                  dplyr::mutate(bbb = dplyr::row_number()) %>%
                                                  dplyr::arrange(bbb) %>%
-                                                 dplyr::mutate(nodes = fct_reorder(nodes, value, mean)) %>%
+                                                 dplyr::mutate(nodes = forcats::fct_reorder(nodes, value, mean)) %>%
                                                  dplyr::arrange(node, x) %>%
                                                  dplyr::group_by(node) %>%
                                                  dplyr::mutate(next_x = dplyr::lead(x),
@@ -490,7 +490,7 @@ StatSankeyText <- ggplot2::ggproto("StatSankeyText", ggplot2::Stat,
                                                if(!("value" %in% names(data))) {
                                                  data <- data %>%
                                                    dplyr::mutate(group = 1) %>%
-                                                   dplyr::select(-n_next_x, -next_node) %>%
+                                                   dplyr::select(-n_next_x, -next_node, -next_x) %>%
                                                    dplyr::group_by_all() %>%
                                                    dplyr::summarise(freq = dplyr::n(), .groups = "keep") %>%
                                                    dplyr::ungroup()
@@ -619,7 +619,7 @@ StatSankeyNode <- ggplot2::ggproto("StatSankeyNode", ggplot2::Stat,
 # geom_sankey -------
 #' @title geom_sankey
 #'
-#' Creates a sankey plot which visualize flows between nodes. Each observation needs to have a `x` aesthetic as well as a `next_x` column which declares where that observation should flow.
+#' @description Creates a sankey plot which visualize flows between nodes. Each observation needs to have a `x` aesthetic as well as a `next_x` column which declares where that observation should flow.
 #' Also each observation should have a `node` and a `next_node` aesthetic which provide information about which group in the y-direction. By default each row of the data frame is counted to calculate the size of flows. A manual flow value can be added with the `value` aesthetic.
 #'
 #' @param mapping provide you own mapping. both x and y need to be numeric.
@@ -631,7 +631,7 @@ StatSankeyNode <- ggplot2::ggproto("StatSankeyNode", ggplot2::Stat,
 #' @param type either 'sankey' or 'alluvial'
 #' @param width width of nodes
 #' @param smooth how much smooth should the curve have? More means steeper curve.
-#' @param inherit.aes should the geom inherits aestethics
+#' @param inherit.aes should the geom inherit aesthetics
 #' @param ... other arguments to be passed to the geom
 #'
 #' @section Aesthetics:
@@ -718,7 +718,7 @@ geom_sankey <- function(mapping = NULL,
 #' @name geom_sankey_label
 #' @aliases geom_sankey_text
 #'
-#' @description Creates centered labels or text in nodes of your sankey plot. Needs to have the exact same aestethics as the call to `geom_sankey` to work.
+#' @description Creates centered labels or text in nodes of your sankey plot. Needs to have the exact same aesthetics as the call to `geom_sankey` to work.
 #'
 #' @param mapping provide you own mapping. both x and y need to be numeric.
 #' @param data provide you own data
@@ -728,9 +728,9 @@ geom_sankey <- function(mapping = NULL,
 #' @param space space between nodes in the y-direction
 #' @param type either 'sankey' or 'alluvial'
 #' @param width width of nodes
-#' @param type Either `sankey` which centers aroudn the x axis or `alluvial` which starts at y = 0 and moves upward.
-#' @param inherit.aes should the geom inherits aestethics
-#' @param ... other arguments to be passed to the geo
+#' @param type Either `sankey` which centers around the x axis or `alluvial` which starts at y = 0 and moves upward.
+#' @param inherit.aes should the geom inherit aesthetics
+#' @param ... other arguments to be passed to the geom
 #'
 #' @return ggplot layer
 #'
@@ -746,7 +746,7 @@ geom_sankey_label <- function(mapping = NULL,
                               width = .1,
                               inherit.aes = TRUE,
                               ...) {
-  # Prepare aesthics for label
+  # Prepare aesthetics for label
   label.aes <- list(...)
 
   list(
@@ -824,7 +824,7 @@ geom_sankey_text <- function(mapping = NULL,
 #' @param space space between nodes in the y-direction
 #' @param width width of nodes
 #' @param smooth how much smooth should the curve have? More means steeper curve.
-#' @param inherit.aes should the geom inherits aestethics
+#' @param inherit.aes should the geom inherit aesthetics
 #' @param ... other arguments to be passed to the geo
 #'
 #' @return ggplot layer
@@ -859,7 +859,7 @@ geom_alluvial <- function(mapping = NULL,
 #' @name geom_alluvial_label
 #' @aliases geom_alluvial_text
 #'
-#' @description Creates centered labels or text in nodes of your alluvial plot. Needs to have the exact same aestethics as the call to `geom_alluvial` to work.
+#' @description Creates centered labels or text in nodes of your alluvial plot. Needs to have the exact same aesthetics as the call to `geom_alluvial` to work.
 #'
 #' @param mapping provide you own mapping. both x and y need to be numeric.
 #' @param data provide you own data
@@ -868,7 +868,7 @@ geom_alluvial <- function(mapping = NULL,
 #' @param show.legend show legend in plot
 #' @param space space between nodes in the y-direction
 #' @param width width of nodes
-#' @param inherit.aes should the geom inherits aestethics
+#' @param inherit.aes should the geom inherit aesthetics
 #' @param ... other arguments to be passed to the geo
 #'
 #' @details Other important arguments is; `space` which proves the space between nodes in the y-direction; `shift` which shifts nodes in the y-direction.
@@ -938,7 +938,7 @@ geom_alluvial_label <- function(mapping = NULL,
 #' @param show.legend show legend in plot
 #' @param type either 'sankey' or 'alluvial'
 #' @param smooth how much smooth should the curve have? More means steeper curve.
-#' @param inherit.aes should the geom inherits aestethics
+#' @param inherit.aes should the geom inherit aesthetics
 #' @param ... other arguments to be passed to the geo
 #'
 #' @details Other important arguments is; `space` which proves the space between nodes in the y-direction; `shift` which shifts nodes in the y-direction.
