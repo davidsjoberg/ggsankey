@@ -148,7 +148,7 @@ ggplot(df, aes(x = x, next_x = next_x, node = node, next_node = next_node, fill 
   geom_path(data = datat2, aes(x, y), inherit.aes = F, color = "red", linewidth = 1.5) +
   geom_path(data = datatt2, aes(x, y), inherit.aes = F, color = "red", linewidth = 1.5) +
   geom_text(data = tibble(x = c(3.5, 2, 3.5), y = c(510, 520, -570), label = c("Flow", "Node", "Stage (x)")), aes(x, y, label = label), inherit.aes = F, color = "red", size = 8) +
-  scale_fill_viridis_d() +
+  scale_fill_viridis_d(drop = FALSE) +
   scale_x_discrete(expand = scales::expand_range(.2)) +
   theme_void(base_size = 18) +
   labs(x = NULL) +
@@ -184,7 +184,7 @@ ggplot(df, aes(x = x, next_x = next_x, node = node, next_node = next_node, fill 
   geom_text(aes(.55, 100, label = "shift"), color = "black", inherit.aes = F, size = 8, hjust = 0) +
   geom_segment(aes(x = 1, xend = 1, y = -100, yend = 200), color = "black", inherit.aes = F, arrow = arrow(length = unit(0.1, "inches"))) +
   
-  scale_fill_viridis_d(option = "A") +
+  scale_fill_viridis_d(option = "A", drop = FALSE) +
   scale_x_discrete(expand = scales::expand_range(.2)) +
   theme_void(base_size = 18) +
   labs(x = NULL) +
@@ -237,7 +237,7 @@ ggplot(df, aes(x = x, next_x = next_x, node = node, next_node = next_node, label
   geom_text(aes(3.69, -555, label = "(Transparency)"), color = "black", inherit.aes = F, size = 3, hjust = 0) +
   geom_curve(aes(3.65, -500, xend = 3.42, yend = -220), color = "black", inherit.aes = F, arrow = arrow(length = unit(0.1, "inches")), curvature = -.5) +
   
-  scale_fill_viridis_d() +
+  scale_fill_viridis_d(drop = FALSE) +
   scale_x_discrete(expand = scales::expand_range(.2)) +
   theme_void(base_size = 18) +
   labs(x = NULL) +
@@ -264,7 +264,8 @@ ggplot(df, aes(x = x,
                node = node, 
                next_node = next_node,
                fill = factor(node))) +
-  geom_sankey()
+  geom_sankey() +
+  scale_fill_discrete(drop=FALSE)
 
 ```
 
@@ -278,7 +279,7 @@ ggplot(df, aes(x = x, next_x = next_x, node = node, next_node = next_node, fill 
   geom_sankey(flow.alpha = .6,
               node.color = "gray30") +
   geom_sankey_label(size = 3, color = "white", fill = "gray40") +
-  scale_fill_viridis_d() +
+  scale_fill_viridis_d(drop = FALSE) +
   theme_sankey(base_size = 18) +
   labs(x = NULL) +
   theme(legend.position = "none",
@@ -295,7 +296,7 @@ Alluvial plots are very similiar to sankey plots but have no spaces between node
 ggplot(df, aes(x = x, next_x = next_x, node = node, next_node = next_node, fill = factor(node), label = node)) +
   geom_alluvial(flow.alpha = .6) +
   geom_alluvial_text(size = 3, color = "white") +
-  scale_fill_viridis_d() +
+  scale_fill_viridis_d(drop = FALSE) +
   theme_alluvial(base_size = 18) +
   labs(x = NULL) +
   theme(legend.position = "none",

@@ -72,7 +72,8 @@ ggplot(df, aes(x = x,
                node = node, 
                next_node = next_node,
                fill = factor(node))) +
-  geom_sankey()
+  geom_sankey() +
+  scale_fill_discrete(drop=FALSE)
 ```
 
 <img src="man/figures/README-example-1.png" width="100%" />
@@ -89,7 +90,7 @@ ggplot(df, aes(x = x, next_x = next_x, node = node, next_node = next_node, fill 
   geom_sankey(flow.alpha = .6,
               node.color = "gray30") +
   geom_sankey_label(size = 3, color = "white", fill = "gray40") +
-  scale_fill_viridis_d() +
+  scale_fill_viridis_d(drop = FALSE) +
   theme_sankey(base_size = 18) +
   labs(x = NULL) +
   theme(legend.position = "none",
@@ -109,7 +110,7 @@ x-axis.
 ggplot(df, aes(x = x, next_x = next_x, node = node, next_node = next_node, fill = factor(node), label = node)) +
   geom_alluvial(flow.alpha = .6) +
   geom_alluvial_text(size = 3, color = "white") +
-  scale_fill_viridis_d() +
+  scale_fill_viridis_d(drop = FALSE) +
   theme_alluvial(base_size = 18) +
   labs(x = NULL) +
   theme(legend.position = "none",
