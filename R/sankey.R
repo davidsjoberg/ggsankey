@@ -490,7 +490,7 @@ StatSankeyText <- ggplot2::ggproto("StatSankeyText", ggplot2::Stat,
                                                if(!("value" %in% names(data))) {
                                                  data <- data %>%
                                                    dplyr::mutate(group = 1) %>%
-                                                   dplyr::select(-n_next_x, -next_node) %>%
+                                                   dplyr::select(-n_next_x, -next_node, -next_x) %>%
                                                    dplyr::group_by_all() %>%
                                                    dplyr::summarise(freq = dplyr::n(), .groups = "keep") %>%
                                                    dplyr::ungroup()
