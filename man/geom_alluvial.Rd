@@ -34,7 +34,7 @@ geom_alluvial(
 
 \item{smooth}{how much smooth should the curve have? More means steeper curve.}
 
-\item{inherit.aes}{should the geom inherits aestethics}
+\item{inherit.aes}{should the geom inherit aesthetics}
 
 \item{...}{other arguments to be passed to the geo}
 }

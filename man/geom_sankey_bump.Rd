@@ -31,7 +31,7 @@ geom_sankey_bump(
 
 \item{type}{either 'sankey' or 'alluvial'}
 
-\item{inherit.aes}{should the geom inherits aestethics}
+\item{inherit.aes}{should the geom inherit aesthetics}
 
 \item{...}{other arguments to be passed to the geo}
 }

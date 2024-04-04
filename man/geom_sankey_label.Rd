@@ -44,17 +44,17 @@ geom_sankey_text(
 
 \item{space}{space between nodes in the y-direction}
 
-\item{type}{Either `sankey` which centers aroudn the x axis or `alluvial` which starts at y = 0 and moves upward.}
+\item{type}{Either `sankey` which centers around the x axis or `alluvial` which starts at y = 0 and moves upward.}
 
 \item{width}{width of nodes}
 
-\item{inherit.aes}{should the geom inherits aestethics}
+\item{inherit.aes}{should the geom inherit aesthetics}
 
-\item{...}{other arguments to be passed to the geo}
+\item{...}{other arguments to be passed to the geom}
 }
 \value{
 ggplot layer
 }
 \description{
-Creates centered labels or text in nodes of your sankey plot. Needs to have the exact same aestethics as the call to `geom_sankey` to work.
+Creates centered labels or text in nodes of your sankey plot. Needs to have the exact same aesthetics as the call to `geom_sankey` to work.
 }

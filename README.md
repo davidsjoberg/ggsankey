@@ -4,7 +4,6 @@
 # ggsankey
 
 <!-- badges: start -->
-
 <!-- badges: end -->
 
 The goal of ggsankey is to make beautiful sankey, alluvial and sankey
@@ -38,9 +37,9 @@ clarification.
 
 <img src="man/figures/README-unnamed-chunk-2-1.png" width="100%" />
 
-Hence, to use `geom_sankey` the aestethics `x`, `next_x`, `node` and
+Hence, to use `geom_sankey` the aesthetics `x`, `next_x`, `node` and
 `next_node` are required. The last *stage* should point to `NA`. The
-aestethics fill and color will affect both *nodes* and *flows*.
+aesthetics fill and color will affect both *nodes* and *flows*.
 
 To plot a sankey diagram with `ggsankey` each observation has a *stage*
 (called a discrete x-value in `ggplot`) and be part of a *node*.
@@ -50,7 +49,7 @@ clarification.
 
 <img src="man/figures/README-unnamed-chunk-3-1.png" width="100%" />
 
-To controll geometries (not changed by data) like fill, color, size,
+To control geometries (not changed by data) like fill, color, size,
 alpha etc for *nodes* and *flows* you can either choose to set a global
 value that affect both, or you can specify which one you want to alter.
 For example `node.color = 'black'` will only draw a black line around
@@ -60,15 +59,11 @@ the nodes, but not the flows (links).
 
 ## Basic usage
 
-### geom\_sankey
+### geom_sankey
 
 A basic sankey plot that shows how dimensions are linked.
 
 ``` r
-library(ggsankey)
-library(dplyr)
-library(ggplot2)
-
 df <- mtcars %>%
   make_long(cyl, vs, am, gear, carb)
 
@@ -77,29 +72,25 @@ ggplot(df, aes(x = x,
                node = node, 
                next_node = next_node,
                fill = factor(node))) +
-  geom_sankey()
+  geom_sankey() +
+  scale_fill_discrete(drop=FALSE)
 ```
 
 <img src="man/figures/README-example-1.png" width="100%" />
 
 And by adding a little pimp.
 
-  - Labels with `geom_sankey_label` which places labels in the center of
-    nodes if given the same aestethics.
-
-  - `ggsankey` also comes with custom minimalistic themes that can be
-    used. Here I use
-`theme_sankey`.
-
-  - 
-<!-- end list -->
+- Labels with `geom_sankey_label` which places labels in the center of
+  nodes if given the same aesthetics.
+- `ggsankey` also comes with custom minimalistic themes that can be
+  used. Here I use `theme_sankey`.
 
 ``` r
 ggplot(df, aes(x = x, next_x = next_x, node = node, next_node = next_node, fill = factor(node), label = node)) +
   geom_sankey(flow.alpha = .6,
               node.color = "gray30") +
   geom_sankey_label(size = 3, color = "white", fill = "gray40") +
-  scale_fill_viridis_d() +
+  scale_fill_viridis_d(drop = FALSE) +
   theme_sankey(base_size = 18) +
   labs(x = NULL) +
   theme(legend.position = "none",
@@ -109,7 +100,7 @@ ggplot(df, aes(x = x, next_x = next_x, node = node, next_node = next_node, fill 
 
 <img src="man/figures/README-sankey-1.png" width="100%" />
 
-### geom\_alluvial
+### geom_alluvial
 
 Alluvial plots are very similiar to sankey plots but have no spaces
 between nodes and start at y = 0 instead being centered around the
@@ -119,7 +110,7 @@ x-axis.
 ggplot(df, aes(x = x, next_x = next_x, node = node, next_node = next_node, fill = factor(node), label = node)) +
   geom_alluvial(flow.alpha = .6) +
   geom_alluvial_text(size = 3, color = "white") +
-  scale_fill_viridis_d() +
+  scale_fill_viridis_d(drop = FALSE) +
   theme_alluvial(base_size = 18) +
   labs(x = NULL) +
   theme(legend.position = "none",
@@ -129,16 +120,13 @@ ggplot(df, aes(x = x, next_x = next_x, node = node, next_node = next_node, fill 
 
 <img src="man/figures/README-alluvial-1.png" width="100%" />
 
-### geom\_sankey\_bump
+### geom_sankey_bump
 
 Sankey bump plots is mix between bump plots and sankey and mostly useful
 for time series. When a group becomes larger than another it bumps above
 it.
 
 ``` r
-# install.packages("gapminder")
-library(gapminder)
-
 df <- gapminder %>%
   group_by(continent, year) %>%
   summarise(gdp = (sum(pop * gdpPercap)/1e9) %>% round(0), .groups = "keep") %>%
