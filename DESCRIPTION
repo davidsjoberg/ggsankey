@@ -6,6 +6,8 @@ Author: David Sjoberg
 Maintainer: David Sjoberg <dav.sjob@gmail.com>
 Description: A package that makes it easy to implement sankey, alluvial and sankey bump plots in ggplot2.
 License: MIT + file LICENSE
+URL: https://github.com/davidsjoberg/ggsankey
+BugReports: https://github.com/davidsjoberg/ggsankey/issues
 Encoding: UTF-8
 LazyData: true
 Imports: 
